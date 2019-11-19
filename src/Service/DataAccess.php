@@ -2,51 +2,19 @@
 
 namespace App\Service;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DBALException;
-use Doctrine\DBAL\Driver\Statement;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
-
-abstract class DataAccess
-{
-
-    private $connection;
-    private $security;
-    private $requestStack;
-
-    public function __construct(Connection $connection, Security $security, RequestStack $requestStack)
-    {
-        $this->connection = $connection;
-        $this->security = $security;
-        $this->requestStack = $requestStack;
+class DataAccess extends BaseDataAccess {
+    public function getUser(string $user) {
+        return parent::executeSQL("SELECT * FROM USUARIO WHERE USERNAME = :user;", ["user" => $user])->fetch();
     }
 
-    /**
-     * @param string $sql
-     * @param array $args
-     * @param bool $log
-     * @return Statement
-     */
-    public function executeSQL(string $sql = "", array $args = [], $log = true) {
-
-        try {
-            $stmt = $this->connection->prepare($sql);
-            foreach ($args as $clave => $valor) {
-                $stmt->bindValue($clave, $valor);
-            }
-            return $stmt->execute() ? $stmt : false;
-        } catch (DBALException $e) {
-            dump($e);
-            return null;
-        }
+    public function getPregunta(string $id) {
+        return parent::executeSQL("SELECT * FROM PREGUNTA WHERE ID = :id", ["id" => $id])->fetch();
     }
 
-    /**
-     * @return string
-     */
-    public function getlastInsertId()
-    {
-        return $this->connection->lastInsertId();
+    public function createUser(array $data) {
+        return parent::executeSQL("INSERT INTO USUARIO(USERNAME, NAME, PASSWORD, EMAIL, COUNTRY, PROVINCE, ROLE) 
+                                    VALUES (:username, :nombre, :pass, :email, :country, :province, 1);",
+                                ["username" => $data["USERNAME"], "nombre" => $data["NAME"], "pass" => $data["PASSWORD"],
+                                    "email" => $data["EMAIL"], "country" => $data["COUNTRY"], "province" => $data["PROVINCE"]]);
     }
 }
