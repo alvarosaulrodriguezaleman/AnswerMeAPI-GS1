@@ -34,14 +34,14 @@ class APIController extends AbstractController
     }
 
     /**
-     * @Route("/api/getPreguntasFromUser/{user}", name="getPreguntasFromUser")
+     * @Route("/api/getFeedPreguntas/{user}", name="getFeedPreguntas")
      * @param string $user
      * @param DataAccess $dataAccess
      * @return Response
      */
-    public function getPreguntasFromUser(string $user, DataAccess $dataAccess)
+    public function getFeedPreguntas(string $user, DataAccess $dataAccess)
     {
-        return new JsonResponse($dataAccess->getPreguntasFromUser($user));
+        return new JsonResponse($dataAccess->getFeedPreguntas($user));
     }
 
     /**
@@ -56,14 +56,14 @@ class APIController extends AbstractController
     }
 
     /**
-     * @Route("/api/getEncuestasFromUser/{id}", name="getEncuestasFromUser")
-     * @param string $id
+     * @Route("/api/getFeedEncuestas/{user}", name="getFeedEncuestas")
+     * @param string $user
      * @param DataAccess $dataAccess
      * @return Response
      */
-    public function getEncuestasFromUser(string $id, DataAccess $dataAccess)
+    public function getFeedEncuestas(string $user, DataAccess $dataAccess)
     {
-        return new JsonResponse($dataAccess->getEncuestasFromUser($id));
+        return new JsonResponse($dataAccess->getFeedEncuestas($user));
     }
 
     /**
@@ -78,14 +78,14 @@ class APIController extends AbstractController
     }
 
     /**
-     * @Route("/api/getPreguntasMultiopcionFromUser/{id}", name="getPreguntasMultiopcionFromUser")
-     * @param string $id
+     * @Route("/api/getFeedPreguntasMultiopcion/{user}", name="getFeedPreguntasMultiopcion")
+     * @param string $user
      * @param DataAccess $dataAccess
      * @return Response
      */
-    public function getPreguntasMultiopcionFromUser(string $id, DataAccess $dataAccess)
+    public function getFeedPreguntasMultiopcion(string $user, DataAccess $dataAccess)
     {
-        return new JsonResponse($dataAccess->getPreguntasMultiopcionFromUser($id));
+        return new JsonResponse($dataAccess->getFeedPreguntasMultiopcion($user));
     }
 
     /**
@@ -244,6 +244,54 @@ class APIController extends AbstractController
     {
         if (!empty(json_decode($request->getContent(), true)["USUARIO_QUE_SIGUE"])) {
             $dataAccess->followUser(json_decode($request->getContent(), true));
+            return new JsonResponse(true);
+        } else {
+            return new JsonResponse(false);
+        }
+    }
+
+    /**
+     * @Route("/api/reportQuestion", name="reportQuestion")
+     * @param DataAccess $dataAccess
+     * @param Request $request
+     * @return string
+     */
+    public function reportQuestion(DataAccess $dataAccess, Request $request)
+    {
+        if (!empty(json_decode($request->getContent(), true)["ID"])) {
+            $dataAccess->reportQuestion(json_decode($request->getContent(), true));
+            return new JsonResponse(true);
+        } else {
+            return new JsonResponse(false);
+        }
+    }
+
+    /**
+     * @Route("/api/likeQuestion", name="likeQuestion")
+     * @param DataAccess $dataAccess
+     * @param Request $request
+     * @return string
+     */
+    public function likeQuestion(DataAccess $dataAccess, Request $request)
+    {
+        if (!empty(json_decode($request->getContent(), true)["ID"])) {
+            $dataAccess->likeQuestion(json_decode($request->getContent(), true));
+            return new JsonResponse(true);
+        } else {
+            return new JsonResponse(false);
+        }
+    }
+
+    /**
+     * @Route("/api/unfollowUser", name="unfollowUser")
+     * @param DataAccess $dataAccess
+     * @param Request $request
+     * @return string
+     */
+    public function unfollowUser(DataAccess $dataAccess, Request $request)
+    {
+        if (!empty(json_decode($request->getContent(), true)["USUARIO_QUE_SIGUE"])) {
+            $dataAccess->unfollowUser(json_decode($request->getContent(), true));
             return new JsonResponse(true);
         } else {
             return new JsonResponse(false);
