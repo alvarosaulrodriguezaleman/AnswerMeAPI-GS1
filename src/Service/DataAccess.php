@@ -103,18 +103,20 @@ class DataAccess extends BaseDataAccess {
     }
 
     public function createEncuesta(array $data) {
-        parent::executeSQL("INSERT INTO pregunta_encuesta(CONTENIDO, OPCION_UNO, OPCION_DOS, USERID)
-                                    VALUES (:CONTENIDO, :OPCION_UNO, :OPCION_DOS, :USERID);",
+        parent::executeSQL("INSERT INTO pregunta_encuesta(CONTENIDO, OPCION_UNO, OPCION_DOS, USERID, LIKES, REPORTS)
+                                    VALUES (:CONTENIDO, :OPCION_UNO, :OPCION_DOS, :USERID, :LIKES, :REPORTS);",
             ["CONTENIDO" => $data["CONTENIDO"], "OPCION_UNO" => $this->createOpcion($data["OPCION_UNO"], 0),
-                "OPCION_DOS" => $this->createOpcion($data["OPCION_DOS"], 0), "USERID" => $data["USERID"]]);
+                "OPCION_DOS" => $this->createOpcion($data["OPCION_DOS"], 0), "USERID" => $data["USERID"],
+                "LIKES" => $data["LIKES"], "REPORTS" => $data["REPORTS"]]);
     }
 
     public function createPreguntaMultiopcion(array $data) {
-        parent::executeSQL("INSERT INTO pregunta_opciones(CONTENIDO, OPCION_UNO, OPCION_DOS, OPCION_TRES, USERID)
-                                    VALUES (:CONTENIDO, :OPCION_UNO, :OPCION_DOS, :OPCION_TRES, :USERID);",
+        parent::executeSQL("INSERT INTO pregunta_opciones(CONTENIDO, OPCION_UNO, OPCION_DOS, OPCION_TRES, USERID, LIKES, REPORTS)
+                                    VALUES (:CONTENIDO, :OPCION_UNO, :OPCION_DOS, :OPCION_TRES, :USERID, :LIKES, :REPORTS);",
             ["CONTENIDO" => $data["CONTENIDO"], "OPCION_UNO" => $this->createOpcion($data["OPCION_UNO"], ($data["RESPUESTA_CORRECTA"] == "1") ? 1 : 0),
                 "OPCION_DOS" => $this->createOpcion($data["OPCION_DOS"], ($data["RESPUESTA_CORRECTA"] == "2") ? 1 : 0),
-                "OPCION_TRES" => $this->createOpcion($data["OPCION_TRES"], ($data["RESPUESTA_CORRECTA"] == "3") ? 1 : 0), "USERID" => $data["USERID"]]);
+                "OPCION_TRES" => $this->createOpcion($data["OPCION_TRES"], ($data["RESPUESTA_CORRECTA"] == "3") ? 1 : 0), "USERID" => $data["USERID"],
+                "LIKES" => $data["LIKES"], "REPORTS" => $data["REPORTS"]]);
     }
 
     public function createRespuesta(array $data) {
