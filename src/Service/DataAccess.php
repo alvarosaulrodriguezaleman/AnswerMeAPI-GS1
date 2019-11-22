@@ -57,7 +57,11 @@ class DataAccess extends BaseDataAccess {
     }
 
     public function getSeguidores(string $username) {
-        return parent::executeSQL("SELECT USUARIO_QUE_SIGUE FROM seguidores WHERE USUARIO_SEGUIDO = :username",
+        return parent::executeSQL("SELECT * 
+                                       FROM usuario 
+                                       WHERE usuario.USERNAME IN (SELECT seguidores.USUARIO_QUE_SIGUE
+                                                        FROM seguidores
+                                                        WHERE seguidores.USUARIO_SEGUIDO = :username)",
             ["username" => $username])->fetchAll();
     }
 
@@ -88,7 +92,7 @@ class DataAccess extends BaseDataAccess {
         return parent::executeSQL("INSERT INTO pregunta(TEXT, USERID, REPORTS, LIKES) 
                                     VALUES (:TEXT_, :USERID, :REPORTS, :LIKES);",
             ["TEXT_" => $data["TEXT"], "USERID" => $data["USERID"], "REPORTS" => $data["REPORTS"],
-                "LIKES" => $data["LIKES"], "ANONYMOUS" => $data["ANONYMOUS"]]);
+                "LIKES" => $data["LIKES"]]);
     }
 
     private function createOpcion($enunciado, $respuesta_correcta) {
@@ -101,8 +105,8 @@ class DataAccess extends BaseDataAccess {
     public function createEncuesta(array $data) {
         parent::executeSQL("INSERT INTO pregunta_encuesta(CONTENIDO, OPCION_UNO, OPCION_DOS, USERID)
                                     VALUES (:CONTENIDO, :OPCION_UNO, :OPCION_DOS, :USERID);",
-            ["CONTENIDO" => $data["CONTENIDO"], "OPCION_UNO" => $this->createOpcion($data["OPCION_UNO"], ($data["RESPUESTA_CORRECTA"] == "1") ? 1 : 0),
-                "OPCION_DOS" => $this->createOpcion($data["OPCION_DOS"], ($data["RESPUESTA_CORRECTA"] == "2") ? 1 : 0), "USERID" => $data["USERID"]]);
+            ["CONTENIDO" => $data["CONTENIDO"], "OPCION_UNO" => $this->createOpcion($data["OPCION_UNO"], 0),
+                "OPCION_DOS" => $this->createOpcion($data["OPCION_DOS"], 0), "USERID" => $data["USERID"]]);
     }
 
     public function createPreguntaMultiopcion(array $data) {
