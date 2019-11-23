@@ -11,6 +11,10 @@ class DataAccess extends BaseDataAccess {
         return parent::executeSQL("SELECT * FROM pregunta WHERE ID = :id", ["id" => $id])->fetch();
     }
 
+    public function getPreguntasFromUser(string $id) {
+        return parent::executeSQL("SELECT * FROM pregunta WHERE USERID = :id", ["id" => $id])->fetchAll();
+    }
+
     public function getFeedPreguntas(string $id) {
         return parent::executeSQL("SELECT * 
                                        FROM pregunta 
@@ -27,6 +31,10 @@ class DataAccess extends BaseDataAccess {
         return parent::executeSQL("SELECT * FROM pregunta_encuesta WHERE ID = :id", ["id" => $id])->fetch();
     }
 
+    public function getEncuestasFromUser(string $id) {
+        return parent::executeSQL("SELECT * FROM pregunta_encuesta WHERE USERID = :id", ["id" => $id])->fetchAll();
+    }
+
     public function getFeedEncuestas(string $id) {
         return parent::executeSQL("SELECT * 
                                        FROM pregunta_encuesta 
@@ -35,8 +43,31 @@ class DataAccess extends BaseDataAccess {
                                                         WHERE seguidores.USUARIO_QUE_SIGUE = :id)", ["id" => $id])->fetchAll();
     }
 
+    public function getFeedEncuestasOptions(string $id) {
+        return parent::executeSQL("SELECT *
+                                       FROM opcion
+                                       WHERE opcion.ID IN (
+                                           SELECT pregunta_encuesta.OPCION_UNO
+                                           FROM pregunta_encuesta 
+                                           WHERE pregunta_encuesta.USERID IN (
+                                               SELECT seguidores.USUARIO_SEGUIDO
+                                               FROM seguidores
+                                               WHERE seguidores.USUARIO_QUE_SIGUE = :id))
+                                       OR opcion.ID IN (
+                                           SELECT pregunta_encuesta.OPCION_DOS
+                                           FROM pregunta_encuesta 
+                                           WHERE pregunta_encuesta.USERID IN (
+                                               SELECT seguidores.USUARIO_SEGUIDO
+                                               FROM seguidores
+                                               WHERE seguidores.USUARIO_QUE_SIGUE = :id))", ["id" => $id])->fetchAll();
+    }
+
     public function getPreguntaMultiopcion(string $id) {
         return parent::executeSQL("SELECT * FROM pregunta_opciones WHERE ID = :id", ["id" => $id])->fetch();
+    }
+
+    public function getPreguntasMultiopcionFromUser(string $id) {
+        return parent::executeSQL("SELECT * FROM pregunta_opciones WHERE USERID = :id", ["id" => $id])->fetchAll();
     }
 
     public function getFeedPreguntasMultiopcion(string $id) {
@@ -45,6 +76,32 @@ class DataAccess extends BaseDataAccess {
                                        WHERE pregunta_opciones.USERID IN (SELECT seguidores.USUARIO_SEGUIDO
                                                         FROM seguidores
                                                         WHERE seguidores.USUARIO_QUE_SIGUE = :id)", ["id" => $id])->fetchAll();
+    }
+
+    public function getFeedPreguntasMultiopcionOptions(string $id) {
+        return parent::executeSQL("SELECT *
+                                       FROM opcion
+                                       WHERE opcion.ID IN (
+                                           SELECT pregunta_opciones.OPCION_UNO
+                                           FROM pregunta_opciones 
+                                           WHERE pregunta_opciones.USERID IN (
+                                               SELECT seguidores.USUARIO_SEGUIDO
+                                               FROM seguidores
+                                               WHERE seguidores.USUARIO_QUE_SIGUE = :id))
+                                       OR opcion.ID IN (
+                                           SELECT pregunta_opciones.OPCION_DOS
+                                           FROM pregunta_opciones 
+                                           WHERE pregunta_opciones.USERID IN (
+                                               SELECT seguidores.USUARIO_SEGUIDO
+                                               FROM seguidores
+                                               WHERE seguidores.USUARIO_QUE_SIGUE = :id))
+                                       OR opcion.ID IN (
+                                           SELECT pregunta_opciones.OPCION_TRES
+                                           FROM pregunta_opciones 
+                                           WHERE pregunta_opciones.USERID IN (
+                                               SELECT seguidores.USUARIO_SEGUIDO
+                                               FROM seguidores
+                                               WHERE seguidores.USUARIO_QUE_SIGUE = :id))", ["id" => $id])->fetchAll();
     }
 
     public function getSiguiendo(string $username) {
@@ -160,5 +217,26 @@ class DataAccess extends BaseDataAccess {
         return parent::executeSQL("DELETE FROM seguidores WHERE USUARIO_QUE_SIGUE = :USUARIO_QUE_SIGUE 
                          AND USUARIO_SEGUIDO = :USUARIO_SEGUIDO;",
             ["USUARIO_QUE_SIGUE" => $data["USUARIO_QUE_SIGUE"], "USUARIO_SEGUIDO" => $data["USUARIO_SEGUIDO"]]);
+    }
+
+    public function deletePregunta(string $id) {
+        return parent::executeSQL("DELETE FROM pregunta WHERE ID = :ID;", ["ID" => $id]);
+    }
+
+    public function deleteEncuesta(string $id) {
+        return parent::executeSQL("DELETE FROM pregunta_encuesta WHERE ID = :ID;", ["ID" => $id]);
+    }
+
+    public function deletePreguntaMultiopcion(string $id) {
+        return parent::executeSQL("DELETE FROM pregunta_opciones WHERE ID = :ID;", ["ID" => $id]);
+    }
+
+    public function deleteRespuesta(string $id) {
+        return parent::executeSQL("DELETE FROM respuesta WHERE ID = :ID;", ["ID" => $id]);
+    }
+
+    public function addPointsToUser(array $data) {
+        return parent::executeSQL("UPDATE usuario SET POINTS = POINTS + :POINTS WHERE USERNAME = :USERNAME;",
+            ["POINTS" => $data["POINTS"], "USERNAME" => $data["USERNAME"]]);
     }
 }

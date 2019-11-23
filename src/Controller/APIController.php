@@ -34,6 +34,17 @@ class APIController extends AbstractController
     }
 
     /**
+     * @Route("/api/getPreguntasFromUser/{user}", name="getPreguntasFromUser")
+     * @param string $user
+     * @param DataAccess $dataAccess
+     * @return Response
+     */
+    public function getPreguntasFromUser(string $user, DataAccess $dataAccess)
+    {
+        return new JsonResponse($dataAccess->getPreguntasFromUser($user));
+    }
+
+    /**
      * @Route("/api/getFeedPreguntas/{user}", name="getFeedPreguntas")
      * @param string $user
      * @param DataAccess $dataAccess
@@ -56,6 +67,17 @@ class APIController extends AbstractController
     }
 
     /**
+     * @Route("/api/getEncuestasFromUser/{id}", name="getEncuestasFromUser")
+     * @param string $id
+     * @param DataAccess $dataAccess
+     * @return Response
+     */
+    public function getEncuestasFromUser(string $id, DataAccess $dataAccess)
+    {
+        return new JsonResponse($dataAccess->getEncuestasFromUser($id));
+    }
+
+    /**
      * @Route("/api/getFeedEncuestas/{user}", name="getFeedEncuestas")
      * @param string $user
      * @param DataAccess $dataAccess
@@ -64,6 +86,17 @@ class APIController extends AbstractController
     public function getFeedEncuestas(string $user, DataAccess $dataAccess)
     {
         return new JsonResponse($dataAccess->getFeedEncuestas($user));
+    }
+
+    /**
+     * @Route("/api/getFeedEncuestasOptions/{user}", name="getFeedEncuestasOptions")
+     * @param string $user
+     * @param DataAccess $dataAccess
+     * @return Response
+     */
+    public function getFeedEncuestasOptions(string $user, DataAccess $dataAccess)
+    {
+        return new JsonResponse($dataAccess->getFeedEncuestasOptions($user));
     }
 
     /**
@@ -78,6 +111,17 @@ class APIController extends AbstractController
     }
 
     /**
+     * @Route("/api/getPreguntasMultiopcionFromUser/{id}", name="getPreguntasMultiopcionFromUser")
+     * @param string $id
+     * @param DataAccess $dataAccess
+     * @return Response
+     */
+    public function getPreguntasMultiopcionFromUser(string $id, DataAccess $dataAccess)
+    {
+        return new JsonResponse($dataAccess->getPreguntasMultiopcionFromUser($id));
+    }
+
+    /**
      * @Route("/api/getFeedPreguntasMultiopcion/{user}", name="getFeedPreguntasMultiopcion")
      * @param string $user
      * @param DataAccess $dataAccess
@@ -86,6 +130,17 @@ class APIController extends AbstractController
     public function getFeedPreguntasMultiopcion(string $user, DataAccess $dataAccess)
     {
         return new JsonResponse($dataAccess->getFeedPreguntasMultiopcion($user));
+    }
+
+    /**
+     * @Route("/api/getFeedPreguntasMultiopcionOptions/{user}", name="getFeedPreguntasMultiopcionOptions")
+     * @param string $user
+     * @param DataAccess $dataAccess
+     * @return Response
+     */
+    public function getFeedPreguntasMultiopcionOptions(string $user, DataAccess $dataAccess)
+    {
+        return new JsonResponse($dataAccess->getFeedPreguntasMultiopcionOptions($user));
     }
 
     /**
@@ -292,6 +347,66 @@ class APIController extends AbstractController
     {
         if (!empty(json_decode($request->getContent(), true)["USUARIO_QUE_SIGUE"])) {
             $dataAccess->unfollowUser(json_decode($request->getContent(), true));
+            return new JsonResponse(true);
+        } else {
+            return new JsonResponse(false);
+        }
+    }
+
+    /**
+     * @Route("/api/deletePregunta/{id}", name="deletePregunta")
+     * @param string $id
+     * @param DataAccess $dataAccess
+     * @return Response
+     */
+    public function deletePregunta(string $id, DataAccess $dataAccess)
+    {
+        return new JsonResponse($dataAccess->deletePregunta($id));
+    }
+
+    /**
+     * @Route("/api/deleteEncuesta/{id}", name="deleteEncuesta")
+     * @param string $id
+     * @param DataAccess $dataAccess
+     * @return Response
+     */
+    public function deleteEncuesta(string $id, DataAccess $dataAccess)
+    {
+        return new JsonResponse($dataAccess->deleteEncuesta($id));
+    }
+
+    /**
+     * @Route("/api/deletePreguntaMultiopcion/{id}", name="deletePreguntaMultiopcion")
+     * @param string $id
+     * @param DataAccess $dataAccess
+     * @return Response
+     */
+    public function deletePreguntaMultiopcion(string $id, DataAccess $dataAccess)
+    {
+        return new JsonResponse($dataAccess->deletePreguntaMultiopcion($id));
+    }
+
+    /**
+     * @Route("/api/deleteRespuesta/{id}", name="deleteRespuesta")
+     * @param string $id
+     * @param DataAccess $dataAccess
+     * @return Response
+     */
+    public function deleteRespuesta(string $id, DataAccess $dataAccess)
+    {
+        return new JsonResponse($dataAccess->deleteRespuesta($id));
+    }
+
+    /**
+     * @Route("/api/addPointsToUser", name="addPointsToUser")
+     * @param DataAccess $dataAccess
+     * @param Request $request
+     * @return string
+     */
+    public function addPointsToUser(DataAccess $dataAccess, Request $request)
+    {
+        if (!empty(json_decode($request->getContent(), true)["USERNAME"])) {
+            $dataAccess->addPointsToUser(json_decode($request->getContent(), true));
             return new JsonResponse(true);
         } else {
             return new JsonResponse(false);
