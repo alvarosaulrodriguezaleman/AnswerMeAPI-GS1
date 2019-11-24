@@ -414,19 +414,14 @@ class APIController extends AbstractController
     }
 
     /**
-     * @Route("/api/chooseOption", name="chooseOption")
+     * @Route("/api/chooseOption/{id}", name="chooseOption")
      * @param DataAccess $dataAccess
-     * @param Request $request
+     * @param string $id
      * @return string
      */
-    public function chooseOption(DataAccess $dataAccess, Request $request)
+    public function chooseOption(DataAccess $dataAccess, string $id)
     {
-        if (!empty(json_decode($request->getContent(), true)["USERNAME"])) {
-            $dataAccess->chooseOption(json_decode($request->getContent(), true));
-            return new JsonResponse(true);
-        } else {
-            return new JsonResponse(false);
-        }
+        return new JsonResponse($dataAccess->chooseOption($id));
     }
 
     /**
