@@ -220,23 +220,39 @@ class DataAccess extends BaseDataAccess {
     }
 
     public function deletePregunta(string $id) {
-        return parent::executeSQL("DELETE FROM pregunta WHERE ID = :ID;", ["ID" => $id]);
+        parent::executeSQL("DELETE FROM pregunta WHERE ID = :ID;", ["ID" => $id]);
+        return true;
     }
 
     public function deleteEncuesta(string $id) {
-        return parent::executeSQL("DELETE FROM pregunta_encuesta WHERE ID = :ID;", ["ID" => $id]);
+        parent::executeSQL("DELETE FROM pregunta_encuesta WHERE ID = :ID;", ["ID" => $id]);
+        return true;
     }
 
     public function deletePreguntaMultiopcion(string $id) {
-        return parent::executeSQL("DELETE FROM pregunta_opciones WHERE ID = :ID;", ["ID" => $id]);
+        parent::executeSQL("DELETE FROM pregunta_opciones WHERE ID = :ID;", ["ID" => $id]);
+        return true;
     }
 
     public function deleteRespuesta(string $id) {
-        return parent::executeSQL("DELETE FROM respuesta WHERE ID = :ID;", ["ID" => $id]);
+        parent::executeSQL("DELETE FROM respuesta WHERE ID = :ID;", ["ID" => $id]);
+        return true;
     }
 
     public function addPointsToUser(array $data) {
-        return parent::executeSQL("UPDATE usuario SET POINTS = POINTS + :POINTS WHERE USERNAME = :USERNAME;",
+        parent::executeSQL("UPDATE usuario SET POINTS = POINTS + :POINTS WHERE USERNAME = :USERNAME;",
             ["POINTS" => $data["POINTS"], "USERNAME" => $data["USERNAME"]]);
+        return true;
+    }
+
+    public function chooseOption(string $id)
+    {
+        parent::executeSQL("UPDATE opcion SET VECES_SELECCIONADAS = VECES_SELECCIONADAS + 1 WHERE ID = :ID", ["ID" => $id]);
+        return true;
+    }
+
+    public function getRanking()
+    {
+        return parent::executeSQL("SELECT usuario.USERNAME, usuario.POINTS FROM usuario ORDER BY POINTS DESC");
     }
 }

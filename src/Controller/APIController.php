@@ -412,4 +412,30 @@ class APIController extends AbstractController
             return new JsonResponse(false);
         }
     }
+
+    /**
+     * @Route("/api/chooseOption", name="chooseOption")
+     * @param DataAccess $dataAccess
+     * @param Request $request
+     * @return string
+     */
+    public function chooseOption(DataAccess $dataAccess, Request $request)
+    {
+        if (!empty(json_decode($request->getContent(), true)["USERNAME"])) {
+            $dataAccess->chooseOption(json_decode($request->getContent(), true));
+            return new JsonResponse(true);
+        } else {
+            return new JsonResponse(false);
+        }
+    }
+
+    /**
+     * @Route("/api/getRanking", name="getRanking")
+     * @param DataAccess $dataAccess
+     * @return Response
+     */
+    public function getRanking(DataAccess $dataAccess)
+    {
+        return new JsonResponse($dataAccess->getRanking());
+    }
 }
