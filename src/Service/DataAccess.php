@@ -253,6 +253,6 @@ class DataAccess extends BaseDataAccess {
 
     public function getRanking()
     {
-        return parent::executeSQL("SELECT usuario.USERNAME, usuario.POINTS FROM usuario ORDER BY POINTS DESC");
+        return parent::executeSQL("SELECT usuario.USERNAME, usuario.POINTS FROM usuario ORDER BY POINTS DESC")->fetchAll();
     }
 }
